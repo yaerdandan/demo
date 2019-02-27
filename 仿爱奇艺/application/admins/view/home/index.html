@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../../../public/static/plugins/layui/css/layui.css">
+    <script type="text/javascript" src="../../../public/static/plugins/layui/layui.js"></script>
+    <title>首页</title>
+    <style>
+        .header {
+            width: 100%;
+            height: 50px;
+            line-height: 50px;
+            background: #2e6da4;
+            color: white;
+        }
+
+        .title {
+            margin-left: 20px;
+            font-size: 20px;
+        }
+
+        .userinfo {
+            float: right;
+            margin-right: 20px;
+        }
+
+        .userinfo a {
+            color: white;
+        }
+
+        .menu {
+            width: 200px;
+            background: #333744;
+            position: absolute;
+        }
+
+        .main {
+            position: absolute;
+            left: 200px;
+            right:0px;
+        }
+
+        .layui-collapse {
+            border: none;
+        }
+
+        .layui-colla-item {
+            border-top: none;
+        }
+
+        .layui-colla-title {
+            background: #42485b;
+            color: #ffffff;
+        }
+
+        .layui-colla-content {
+            border-top: none;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- header -->
+    <div class="header">
+        <span class="title">{$site.values}-后台管理系统</span>
+        <span class="userinfo">{$admin.username}【{$role.title}】
+            <span><a href="javascript:;" onclick="logout()">退出</a></span></span>
+    </div>
+    <!-- 菜单 -->
+    <div class="menu" id="menu">
+        <div class="layui-collapse" lay-accordion>
+            {volist name="menus" id="vo"}
+            <div class="layui-colla-item">
+                <h2 class="layui-colla-title">{$vo.title}</h2>
+                <div class="layui-colla-content">
+                    {if condition = "$vo.children"}
+                    <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                       {volist name="vo.children" id="cvo"}
+                        <li class="layui-nav-item"><a href="javascript:;" onclick="menuFire(this)" src="/tp5/public/admins/{$cvo.controller}/{$cvo.method}">{$cvo.title}</a></li>
+                        {/volist}
+                    </ul>
+                    {/if}
+                </div>
+            </div>
+            {/volist}
+            <div class="layui-colla-item">
+                <h2 class="layui-colla-title">权限管理</h2>
+                <div class="layui-colla-content">
+                     <div class="layui-colla-content layui-show">
+                        <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                            <li class="layui-nav-item"><a href="javascript:;" onclick="menuFire(this)" src="/tp5/public/admins/Menu/index">菜单管理</a></li>
+                            <li class="layui-nav-item"><a href="javascript:;" onclick="menuFire(this)" src="/tp5/public/admins/Roles/index">角色管理</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="main">
+        <iframe src="/tp5/public/admins/Home/welcome" onload="restMainHeight(this)" style="width:100%;height:100%;"
+            frameborder="0" scrolling="0"></iframe>
+    </div>
+</body>
+<script>
+    //注意：折叠面板 依赖 element 模块，否则无法进行功能性操作
+    layui.use(['element','layer'], function () {
+        var element = layui.element;
+        layer = layui.layer;
+        $ = layui.jquery;
+        reseMenuHeight();
+    });
+    //重新设置菜单容器的高度
+    function reseMenuHeight() {
+        var height = document.documentElement.clientHeight - 50;
+        $('#menu').height(height);
+    }
+    //重新设置操作页面高度
+    function restMainHeight(obj) {
+        var height = document.documentElement.clientHeight - 53;
+        $(obj).parent('div').height(height);
+    }
+    //彩蛋点击事件
+    function menuFire(obj) {
+        //获取url
+        var src = $(obj).attr('src');
+        //设置iframe的src
+        $('iframe').attr('src',src);
+    }
+
+    //退出
+    function logout() {
+        layer.confirm('确定要退出吗', {
+                icon:3,
+                btn: ['确定', '取消'] //按钮
+            }, function () {
+                $.get('/tp5/public/admins/account/logout',function(res) {
+                    if (res.code > 0) {
+                        layer.alert(res.msg, {
+                            'icon': 2
+                        });
+                    } else {
+                        layer.alert(res.msg);
+                        setTimeout(function(){ window.location.href="/tp5/public/admins/account/login"},1000);
+                    }
+                },'json');
+            });    
+    }
+</script>
+
+</html>

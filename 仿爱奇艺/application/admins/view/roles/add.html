@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../../../public/static/plugins/layui/css/layui.css">
+    <script type="text/javascript" src="../../../public/static/plugins/layui/layui.js"></script>
+    <title>角色添加</title>
+</head>
+
+<body style="padding:10px;">
+    <form class="layui-form">
+        <div class="form-form-item">
+            <label class="layui-form-label">角色名称</label>
+            <input type="hidden" name="gid" value="{$role.gid}">
+            <div class="layui-input-block">
+                <input type="text" class="layui-input" name="title" value="{$role.title}">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class='layui-form-label'>权限管理</label>
+            {volist name="menus" id="vo"}
+            <hr>
+            <div class="layui-input-block">
+                <input type="checkbox" name="menu[{$vo.mid}]" lay-skin="primary" title="{$vo.title}" {:isset($role['rights']) && $role['rights'] && in_array($vo.mid,$role['rights']) ? 'checked' : '' }>
+                <hr>
+                {volist name="vo.children" id="cvo"}
+                <input type="checkbox" name="menu[{$cvo.mid}]" lay-skin="primary" title="{$cvo.title}" {:isset($role['rights']) && $role['rights'] && in_array($vo.mid,$role['rights']) ? 'checked' : '' }>
+                {/volist}
+             </div>
+            {/volist}
+        </div>
+    </form>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" onclick="save()">保存</button>
+        </div>
+    </div>
+</body>
+<script>
+    layui.use(['layer', 'form'], function () {
+        var form = layui.form;
+        layer = layui.layer;
+        $ = layui.jquery;
+    });
+    //保存
+    function save() {
+        var title = $.trim($('input[name="title"]').val());
+        if (title = '') {
+            layer.msg('请填写角色名称', {
+                "icon": 2
+            });
+            return;
+        }
+        $.post('/tp5/public/admins/roles/save', $('form').serialize(), function (res) {
+            if (res.code > 0) {
+                layer.msg(res.msg, {
+                    'icon': 2
+                });
+            } else {
+                layer.msg(res.msg, {
+                    'icon': 1
+                });
+                setTimeout(function () {
+                    parent.window.location.reload();
+                }, 1000);
+            }
+        })
+    }
+   
+</script>
+
+</html>

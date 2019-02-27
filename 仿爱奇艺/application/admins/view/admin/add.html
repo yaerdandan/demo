@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../../../public/static/plugins/layui/css/layui.css">
+    <script type="text/javascript" src="../../../public/static/plugins/layui/layui.js"></script>
+    <title>Document</title>
+</head>
+
+<body style="padding:10px">
+    <form action="/tp5/public/admins/admin/save" method="post">
+        <div class="layui-form-item">
+            <input type="hidden" name="id" value="{$data.item.id}">
+            <label class="layui-form-label">用户名</label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" name="username" value="{$data.item.username}" {$data.item.id>0?'readonly':''}>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">角&nbsp;&nbsp;&nbsp;&nbsp;色</label>
+            <div class="layui-input-inline">
+                <select name="gid">
+                    {volist name="data.group" id="vo"}
+                    <option value="{$vo.gid}" {$vo.gid == $data.item.gid ? 'selected' : ''}>{$vo.title}</option>
+                    {/volist}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">密&nbsp;&nbsp;&nbsp;&nbsp;码</label>
+            <div class="layui-input-inline">
+                <input type="password" class="layui-input" name="pwd" >
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">姓&nbsp;&nbsp;&nbsp;&nbsp;名</label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" name="truename"value="{$data.item.truename}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">状&nbsp;&nbsp;&nbsp;&nbsp;态</label>
+            <div class="layui-input-inline">
+                <input type="checkbox" lay-skin="primary" title="禁用" name="status" value="1" {$data.item.status ? 'checked' :''}>禁用
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <input type="submit" class="layui-btn" value="保存">
+            </div>
+        </div>
+    </form>
+
+</body>
+
+</html>

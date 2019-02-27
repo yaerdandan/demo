@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../../../public/static/plugins/layui/css/layui.css">
+    <script type="text/javascript" src="../../../public/static/plugins/layui/layui.js"></script>
+    <title>Document</title>
+    <style>
+        .list{
+            background:#009688;
+            margin-left:30px;
+            color:#ffffff;
+            display: inline-block;
+            width:70px;
+            height:30px;
+            line-height: 30px;
+        }
+    </style>
+</head>
+
+<body style="padding:10px;">
+        <div class="header">
+                <span class="list">网站设置</span>
+            </div>
+    <form class="layui-form" style="margin-top:10px;">
+        <div class="layui-form-item">
+            <label class="layui-form-label">网站名称</label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" name="title" value="{$site.values}">
+            </div>
+        </div>
+    </form>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" onclick="save()">提交</button>
+        </div>
+    </div>
+
+</body>
+<script>
+    layui.use(['layer'],function() {
+        $ = layui.jquery;
+        layer = layui.layer;
+    });
+
+    function save() {
+        var title = $.trim($('input[name="title"]').val());
+        if(title == '') {
+            layer.msg('网站名称为空',{'icon':2});
+        }
+        $.post('/tp5/public/admins/Site/save',{'title':title},function(res) {
+            if(res.code>0){
+                layer.alert(res.msg,{'icon':2});
+            }else{
+                layer.msg(res.msg,{'icon':1});
+                setTimeout(function() {window.location.reload()},1000);
+            }
+        },'json')
+    }
+</script>
+</html>
